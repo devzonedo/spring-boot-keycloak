@@ -2,6 +2,8 @@ package com.devz.auth.server.controller;
 
 import com.devz.auth.server.model.LoginRequest;
 import com.devz.auth.server.model.LoginResponse;
+import com.devz.auth.server.model.Response;
+import com.devz.auth.server.model.TokenRequest;
 import com.devz.auth.server.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,4 +23,11 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest loginRequest){
       return  loginService.login(loginRequest);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Response> logout(@RequestBody TokenRequest tokenRequest){
+        return loginService.logout(tokenRequest);
+    }
+
+
 }

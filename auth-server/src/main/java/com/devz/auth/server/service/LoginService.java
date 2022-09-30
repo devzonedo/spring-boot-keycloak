@@ -2,6 +2,8 @@ package com.devz.auth.server.service;
 
 import com.devz.auth.server.model.LoginRequest;
 import com.devz.auth.server.model.LoginResponse;
+import com.devz.auth.server.model.Response;
+import com.devz.auth.server.model.TokenRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -39,5 +41,24 @@ public class LoginService {
         HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(map,headers);
         ResponseEntity<LoginResponse> response = restTemplate.postForEntity("http://localhost:8180/auth/realms/auth-realm/protocol/openid-connect/token", httpEntity, LoginResponse.class);
         return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<Response> logout(TokenRequest tokenRequest) {
+        HttpHeaders  headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+        map.add("client_id",clientId);
+        map.add("client_secret",clientSecret);
+        map.add("refresh_token",tokenRequest.getToken());
+
+        HttpEntity<MultiValueMap<String,String>> httpEntity = new HttpEntity<>(map,headers);
+        ResponseEntity<Response> response = restTemplate.postForEntity("http://localhost:8180/auth/realms/auth-realm/protocol/openid-connect/logout", httpEntity, Response.class);
+
+        Response res = new Response();
+        if(response.getStatusCode().is2xxSuccessful()){
+            res.setMessage("Logged out successfully");
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
